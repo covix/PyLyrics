@@ -39,9 +39,9 @@ class Album(object):
 
 class PyLyrics:
 	@staticmethod
-	def getAlbums(singer):
+	def getAlbums(singer, parser='html.parser'):
 		singer = singer.replace(' ', '_')
-		s = BeautifulSoup(requests.get('http://lyrics.wikia.com/{0}'.format(singer)).text)
+		s = BeautifulSoup(requests.get('http://lyrics.wikia.com/{0}'.format(singer)).text, features=parser)
 		spans = s.findAll('span',{'class':'mw-headline'})
 		
 		als = []
@@ -58,9 +58,9 @@ class PyLyrics:
 			return None
 		return als
 	@staticmethod 
-	def getTracks(album):
+	def getTracks(album, parser='html.parser'):
 		url = "http://lyrics.wikia.com/api.php?action=lyrics&artist={0}&fmt=xml".format(album.artist())
-		soup = BeautifulSoup(requests.get(url).text)
+		soup = BeautifulSoup(requests.get(url).text, features=parser)
 
 		for al in soup.find_all('album'):
 			if al.text.lower().strip() == album.name.strip().lower():
@@ -70,12 +70,12 @@ class PyLyrics:
 		return songs
 
 	@staticmethod
-	def getLyrics(singer, song):
+	def getLyrics(singer, song, parser='html.parser'):
 		#Replace spaces with _
 		singer = singer.replace(' ', '_')
 		song = song.replace(' ', '_')
 		r = requests.get('http://lyrics.wikia.com/{0}:{1}'.format(singer,song))
-		s = BeautifulSoup(r.text)
+		s = BeautifulSoup(r.text, features=parser)
 		#Get main lyrics holder
 		lyrics = s.find("div",{'class':'lyricbox'})
 		if lyrics is None:
